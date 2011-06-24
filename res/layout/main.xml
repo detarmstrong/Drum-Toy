@@ -110,11 +110,17 @@
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:orientation="horizontal" android:fillViewport="true">
 
-        <LinearLayout android:id="@+id/canvas"
+        <!-- FrameLayout because views will be layered
+            4. Others not thought of yet
+            3. Blips (indicate current playing beat)
+            2. Sound Symbols
+            1. Beat Board Background
+         -->
+        <FrameLayout android:id="@+id/canvas"
             android:layout_width="wrap_content" android:layout_height="match_parent"
             android:orientation="horizontal">
 
-        </LinearLayout>
+        </FrameLayout>
     </HorizontalScrollView>
 
     <LinearLayout android:layout_height="wrap_content"

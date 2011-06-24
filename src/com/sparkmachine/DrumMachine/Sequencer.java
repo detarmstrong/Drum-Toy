@@ -1,93 +1,115 @@
 package com.sparkmachine.DrumMachine;
 
+import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 
 /**
  * @purpose Sequencer activity is about making sequences of sounds
- *
+ * 
  */
 public class Sequencer extends Activity implements OnClickListener {
     private static final String TAG = "Sequencer";
     private HorizontalScrollView mCanvasScrollView;
-    private LinearLayout mCanvasLayout;
-    private BeatBoardView mVisualizerView;
+    private FrameLayout mCanvasLayout;
+    private BeatBoardBackgroundView mBeatBoardBgView;
     private View mPlayButton;
     private MediaPlayer mTomPlayer;
     private ScheduledThreadPoolExecutor mTimer;
     private boolean mIsTmerScheduled;
     private int mBeatIndex;
     private int mSumSequenceBeats;
-    
+    private SoundSymbolView mSoundSymbolView;
+    private BlipView mBlipView;
+    private ArrayList<Beat> mBeatsArray;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mCanvasScrollView = (HorizontalScrollView) findViewById(R.id.canvasScroll);
-        mCanvasLayout = (LinearLayout) findViewById(R.id.canvas);
 
-        mVisualizerView = new BeatBoardView(this);
-        mVisualizerView.setLayoutParams(new ViewGroup.LayoutParams(900,
+        int beatCount = 12;
+        mBeatsArray = new ArrayList<Beat>(beatCount);
+        for (int i = 0; i < beatCount; i++) {
+            mBeatsArray.add(new Beat(Beat.BeatState.RESTING, false));
+        }
+        
+        BeatBoard beatBoard = new BeatBoard(this, mBeatsArray);
+
+        mCanvasScrollView = (HorizontalScrollView) findViewById(R.id.canvasScroll);
+        mCanvasLayout = (FrameLayout) findViewById(R.id.canvas);
+
+        mBeatBoardBgView = new BeatBoardBackgroundView(this, mBeatsArray);
+        mBeatBoardBgView.setLayoutParams(new ViewGroup.LayoutParams(
+                beatBoard.getWidth(),
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
-        mCanvasLayout.addView(mVisualizerView);
-
-        mVisualizerView.updateVisualizer(new Beat[4]);
+        mBlipView = new BlipView(this, beatBoard, mBeatsArray);
+        mBlipView.setLayoutParams(new ViewGroup.LayoutParams(
+                beatBoard.getWidth(),
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        mBlipView.setBackgroundColor(R.color.transparent);
         
+        mSoundSymbolView = new SoundSymbolView(this, beatBoard, mBeatsArray);
+        mSoundSymbolView.setLayoutParams(new ViewGroup.LayoutParams(
+                beatBoard.getWidth(),
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        mSoundSymbolView.setBackgroundColor(R.color.transparent);
+
+        mCanvasLayout.addView(mBeatBoardBgView);
+        mCanvasLayout.addView(mBlipView);
+        mCanvasLayout.addView(mSoundSymbolView);
+
         mPlayButton = findViewById(R.id.playButton);
         mPlayButton.setOnClickListener(this);
-        
+
         mTomPlayer = MediaPlayer.create(this, R.raw.tom);
-        
+
         mIsTmerScheduled = false;
-        
+
     }
-    
+
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
-        try{
+        try {
             mTimer.shutdownNow();
-        }
-        catch(Exception e){
-            
+        } catch (Exception e) {
+
         }
     }
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
+        mBeatBoardBgView.requestLayout();
+        switch (view.getId()) {
             case R.id.playButton:
-                if(!isLooping()){
-                    startLooping(getBpm());
-                }
-                else{
+                if (!isLooping()) {
+                    startLooping();
+                } else {
                     stopLooping();
                 }
                 break;
         }
+
     }
 
-    
     private int getBpm() {
         return 120;
     }
@@ -102,27 +124,30 @@ public class Sequencer extends Activity implements OnClickListener {
     }
 
     /**
-     * purpose  Begin looping the sequence
+     * purpose Begin looping the sequence
      */
-    private void startLooping(int bpm) {
-        int periodMs = convertBpmToPeriodMs(bpm);
-        
-        mTimer = new ScheduledThreadPoolExecutor(1);
-        mTimer.scheduleAtFixedRate(new TimerTask(){
+    private void startLooping() {
+        int periodMs = convertBpmToPeriodMs(getBpm());
+
+        mTimer = new ScheduledThreadPoolExecutor(3);
+        mTimer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
             public void run() {
                 int mBeatIndex = revolvingBeatIndex();
+                
+                mUiUpdateHandler.sendMessage(mUiUpdateHandler
+                        .obtainMessage(mBeatIndex));
+
                 Log.i(TAG, "in loop, hitting play()");
-                if(mTomPlayer.isPlaying()){
+                if (mTomPlayer.isPlaying()) {
                     mTomPlayer.seekTo(0);
-                }
-                else{
+                } else {
                     mTomPlayer.start();
                 }
-                
+
             }
-            
+
         }, periodMs, periodMs, TimeUnit.MILLISECONDS);
         mIsTmerScheduled = true;
 
@@ -130,136 +155,34 @@ public class Sequencer extends Activity implements OnClickListener {
 
     protected int revolvingBeatIndex() {
         mBeatIndex++;
-        if(mBeatIndex > mSumSequenceBeats){
+        if (mBeatIndex >= mBeatsArray.size()) {
             mBeatIndex = 0;
-            
+
         }
         return mBeatIndex;
     }
 
     private int convertBpmToPeriodMs(int bpm) {
-        return 1000 / (bpm  / 60);
-    }
-}
-
-class BeatBoardView2 extends View {
-    public int mBeatCount = 4;
-    public int mMinGapDp = 15;
-    public int mZoomLevel = 1;
-    public int mLineColor = Color.WHITE;
-
-    public BeatBoardView2(Context context) {
-        super(context);
-        init();
+        return 1000 / (bpm / 60);
     }
 
-    public void init() {
-
-    }
-
-}
-
-
-/**
- * @purpose View of blips that indicate the current beat playing
- *
- */
-class BlipView extends View {
-
-    public BlipView(Context context) {
-        super(context);
-    }
-    
-}
-
-/**
- * @purpose SoundView represents graphically sound elements (instruments)
- *
- */
-class SoundView extends View {
-
-    public SoundView(Context context) {
-        super(context);
-        // TODO Auto-generated constructor stub
-    }
-    
-}
-
-
-/**
- * @purpose Represents the view of the static board elements
- *
- */
-class BeatBoardView extends View {
-    private Paint mBlipPaint = new Paint();
-    private Rect mBlipRect = new Rect(); // blip is manifestation of a beat
-    private Beat[] mBeats;
-    private Context mContext;
-    private Paint mActiveBeatLinePaint;
-    private Paint mInactiveBeatLinePaint;
-
-    public BeatBoardView(Context context) {
-        super(context);
-        mContext = (Context) context;
-        init();
-    }
-
-    public void init() {
-        mBlipPaint.setColor(Color.GRAY);
-        mBlipPaint.setStrokeWidth(1);
-        mBlipPaint.setAntiAlias(true);
-        
-        mActiveBeatLinePaint = new Paint();
-        mActiveBeatLinePaint.setColor(Color.WHITE);
-        mInactiveBeatLinePaint = new Paint();
-        mInactiveBeatLinePaint.setColor(Color.GRAY);
-        
-    }
-
-    public void updateVisualizer(Beat[] beats) {
-        mBeats = beats;
-        invalidate();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        int blipWidth = 30;
-
-        // at default zoom level, show 4 full beats and half of the 5th beat
-        int displayWidthPx = displayWidth();
-
-        float beatSpacing = (float) (displayWidthPx / 5.5);
-        float absBeatSpace = 0; // absolute value from left for where to place x
-                                // of line
-
-        for (Beat beat : mBeats) {
-            absBeatSpace += beatSpacing;
-            canvas.drawLine(absBeatSpace, 0, absBeatSpace, getHeight(),
-                    mActiveBeatLinePaint);
+    private Handler mUiUpdateHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int activeBeatIndex = msg.what;
             
-            int blipLeft = (int) absBeatSpace - (blipWidth / 2);
-            int blipTop = getHeight() - 10;
-            int blipRight = blipLeft + blipWidth;
-            int blipBottom = getHeight();
-            mBlipRect.set(blipLeft, blipTop, blipRight, blipBottom);
-            canvas.drawRect(mBlipRect, mBlipPaint);
+            // update views that make up soundboard
+            mBlipView.update(activeBeatIndex, mBeatsArray);
+
+            if(activeBeatIndex == 0){
+                mCanvasScrollView.fullScroll(View.FOCUS_LEFT);
+            } else
+            if(activeBeatIndex % 4 == 0){
+                mCanvasScrollView.pageScroll(View.FOCUS_RIGHT);
+            }
+            
         }
-
-        // draw the faded line that represents adding an new line
-        float addNewBeatLineLineX = absBeatSpace + beatSpacing;
-        canvas.drawLine(addNewBeatLineLineX, 0, addNewBeatLineLineX,
-                getHeight(), mInactiveBeatLinePaint);
-
-    }
-
-    private int displayWidth() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        ((Activity) mContext).getWindowManager().getDefaultDisplay()
-                .getMetrics(metrics);
-
-        int displayWidthPx = metrics.widthPixels;
-        return displayWidthPx;
-    }
-
+    };
 }
+
