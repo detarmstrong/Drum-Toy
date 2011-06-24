@@ -38,7 +38,6 @@ public class Sequencer extends Activity implements OnClickListener {
     private BlipView mBlipView;
     private ArrayList<Beat> mBeatsArray;
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
