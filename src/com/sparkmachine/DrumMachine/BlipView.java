@@ -14,8 +14,6 @@ import android.view.View;
 /**
  * Render the active beat represented as a little yellow rectangle
  * 
- * @author dat
- * 
  */
 public class BlipView extends View {
 
