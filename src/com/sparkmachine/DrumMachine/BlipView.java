@@ -51,7 +51,6 @@ public class BlipView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.i(TAG, "on blipview draw index " + mActiveBeatIndex);
         Integer blipWidth = (Integer) mPropsMap.get("width");
         Integer blipHeight = (Integer) mPropsMap.get("height");
 

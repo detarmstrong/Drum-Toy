@@ -56,8 +56,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"></TextView>
 
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
+                <ImageButton android:id="@+id/drumTom"
+                    android:src="@drawable/kick"
                     android:layout_height="30dip" android:scaleType="fitXY"
                     android:layout_width="40dip" android:padding="0dip"></ImageButton>
 

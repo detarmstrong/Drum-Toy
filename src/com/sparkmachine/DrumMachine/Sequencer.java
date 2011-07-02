@@ -1,13 +1,13 @@
 package com.sparkmachine.DrumMachine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +37,8 @@ public class Sequencer extends Activity implements OnClickListener {
     private SoundSymbolView mSoundSymbolView;
     private BlipView mBlipView;
     private ArrayList<Beat> mBeatsArray;
+    private View mTomButton;
+    private int mSelectedSoundResourceId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,9 @@ public class Sequencer extends Activity implements OnClickListener {
         mTomPlayer = MediaPlayer.create(this, R.raw.tom);
 
         mIsTmerScheduled = false;
+        
+        mTomButton = findViewById(R.id.drumTom);
+        mTomButton.setOnClickListener(this);
 
     }
 
@@ -97,6 +102,10 @@ public class Sequencer extends Activity implements OnClickListener {
     @Override
     public void onClick(View view) {
         mBeatBoardBgView.requestLayout();
+        
+        HashMap  soundMap = new HashMap<Integer, Integer>();
+        soundMap.put(R.id.drumTom, R.raw.tom);
+        
         switch (view.getId()) {
             case R.id.playButton:
                 if (!isLooping()) {
@@ -105,12 +114,19 @@ public class Sequencer extends Activity implements OnClickListener {
                     stopLooping();
                 }
                 break;
+            default:
+                mSelectedSoundResourceId = (Integer) soundMap.get(view.getId());
+                break;
         }
 
     }
 
     private int getBpm() {
         return 120;
+    }
+    
+    public Sound getSelectedSoundInstance(Point center){
+        return new Sound(this, mSelectedSoundResourceId, center);
     }
 
     private void stopLooping() {
