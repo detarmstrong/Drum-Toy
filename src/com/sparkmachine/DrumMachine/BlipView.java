@@ -61,11 +61,12 @@ public class BlipView extends View {
                                 // of line
 
         for (Beat beat : mBeats) {
-            absBeatSpace += beatSpacing;
 
             if (beat.equals(mBeats.get(mActiveBeatIndex))) {
                 drawBlip(canvas, blipWidth, blipHeight, absBeatSpace);
             }
+            
+            absBeatSpace += beatSpacing;
         }
         
         //getLayoutParams().width = (int) absBeatSpace;

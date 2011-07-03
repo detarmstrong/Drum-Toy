@@ -51,20 +51,32 @@ public class SoundSymbolView extends View {
         for (Beat beat : mBeats) {
             subDivisionsTemp = beat.getSubdivisions();
 
-            for (BeatSubDivide subDivide : subDivisionsTemp) {
-                ArrayList<Sound> tSounds = subDivide.getSounds();
+            if (subDivisionsTemp.size() > 0) { // Avoid implicit iterator
+                                               // creation in for : in below if
+                                               // no elements
 
-                for (Sound sound : tSounds) {
-                    Point centerPoint = sound.getSoundSymbolCenterPoint();
+                for (BeatSubDivide subDivide : subDivisionsTemp) {
+                    ArrayList<Sound> tSounds = subDivide.getSounds();
 
-                    canvas.drawBitmap(((BitmapDrawable) getResources()
-                            .getDrawable(R.drawable.kick)).getBitmap(),
-                            centerPoint.x - (drawableWidth / 2), centerPoint.y - (drawableHeight / 2), mSymbolPaint);
+                    if (tSounds != null && tSounds.size() > 0) {
+                        for (Sound sound : tSounds) {
+                            Point centerPoint = sound
+                                    .getSoundSymbolCenterPoint();
+
+                            Log.i(TAG,
+                                    "soundimagebuttonid "
+                                            + sound.getSoundImageButtonId());
+
+                            canvas.drawBitmap(((BitmapDrawable) sound
+                                    .getSoundImageDrawable()).getBitmap(),
+                                    centerPoint.x - 25, centerPoint.y - 25, mSymbolPaint);
+
+                        }
+                    }
 
                 }
 
             }
-
         }
 
     }
@@ -74,30 +86,6 @@ public class SoundSymbolView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
-
-        // snap to snap resolution, as denominator of fraction
-        // eg snapResolution = 16 is 1/16th of the beat
-        // int snapResolution = 16;
-
-        // int subDivision = 0;
-        // float touchedX = event.getX();
-        // int beatBoardWidth = getWidth();
-        //
-        // float x = beatBoardWidth / touchedX;
-        // int beatIndex = (int) x;
-        //
-        // float dividend = (x / (float) snapResolution);
-        // float choppedDecimal = dividend - (int) dividend;
-        // int roundedRemainder = Math.round(choppedDecimal);
-        //
-        // subDivision = (int) dividend * snapResolution
-        // + (roundedRemainder * snapResolution);
-        //
-        // Log.i(TAG, "beat " + beatIndex + ", subdivision " + subDivision);
-        //
-        // mBeats.get(beatIndex).addAt(subDivision);
-
-        // Next Attempt - Purple
 
         int snapResolution = 4;
 
@@ -122,6 +110,8 @@ public class SoundSymbolView extends View {
 
         Sound selectedSound = ((Sequencer) mContext)
                 .getSelectedSoundInstance(soundSymbolCenterPoint);
+
+        Log.i(TAG, "sound selected " + selectedSound);
 
         mBeats.get(beatIndex).addAt(subDivision, selectedSound);
 

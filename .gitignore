@@ -1,4 +1,4 @@
 /bin
 .DS_Store
 .settings
-gen/com/futilities/mindtimer/R.java
+gen/com/sparkmachine/DrumMachine/R.java

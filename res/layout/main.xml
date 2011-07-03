@@ -47,57 +47,28 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ImageButton android:id="@+id/drumCymbal"
+                <ImageButton android:id="@+id/drumButtonRide"
                     android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
+                    android:background="@color/transparent"
+                    android:layout_height="40dip" android:scaleType="fitXY"
                     android:layout_width="40dip" android:padding="0dip"></ImageButton>
 
-                <TextView android:text="splash" android:id="@+id/cymbalText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></TextView>
+                <ImageButton android:id="@+id/drumButtonHiHatOpen"
+                    android:src="@drawable/hi_hat_open2"
+                    android:background="@color/transparent"
+                    android:layout_height="40dip" android:scaleType="fitXY"
+                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
 
-                <ImageButton android:id="@+id/drumTom"
+                <ImageButton android:id="@+id/drumButtonTom"
                     android:src="@drawable/kick"
-                    android:layout_height="30dip" android:scaleType="fitXY"
+                    android:background="@color/transparent"
+                    android:layout_height="40dip" android:scaleType="fitXY"
                     android:layout_width="40dip" android:padding="0dip"></ImageButton>
-
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
-                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
-                <ImageButton android:id="@+id/imageButton1"
-                    android:src="@drawable/ride_cymbal"
-                    android:layout_height="30dip" android:scaleType="fitXY"
+                    
+                <ImageButton android:id="@+id/drumButtonSnare"
+                    android:src="@drawable/snare"
+                    android:background="@color/transparent"
+                    android:layout_height="40dip" android:scaleType="fitXY"
                     android:layout_width="40dip" android:padding="0dip"></ImageButton>
             </LinearLayout>
 

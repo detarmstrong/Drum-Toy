@@ -64,7 +64,6 @@ class BeatBoardBackgroundView extends View {
                                 // of line
 
         for (Beat beat : mBeats) {
-            absBeatSpace += beatSpacing;
             canvas.drawLine(absBeatSpace, 0, absBeatSpace, getHeight(),
                     mActiveBeatLinePaint);
             
@@ -75,6 +74,8 @@ class BeatBoardBackgroundView extends View {
             int blipBottom = getHeight();
             mBlipRect.set(blipLeft, blipTop, blipRight, blipBottom);
             canvas.drawRect(mBlipRect, mBlipPaint);
+            
+            absBeatSpace += beatSpacing;
         }
 
         // draw the faded line that represents adding an new line
