@@ -1,4 +1,4 @@
-package com.sparkmachine.DrumMachine;
+package com.sparkmachine.drum;
 
 import java.util.ArrayList;
 

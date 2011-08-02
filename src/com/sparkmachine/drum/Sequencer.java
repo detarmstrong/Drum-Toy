@@ -1,16 +1,20 @@
-package com.sparkmachine.DrumMachine;
+package com.sparkmachine.drum;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.sparkmachine.drum.R;
+import com.sparkmachine.playground.AudioTrackSample;
+
 import android.app.Activity;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +32,7 @@ import android.widget.ImageButton;
  */
 public class Sequencer extends Activity implements OnClickListener {
     private static final String TAG = "Sequencer";
+    private static final int MAX_STREAMS = 8;
     private HorizontalScrollView mCanvasScrollView;
     private FrameLayout mCanvasLayout;
     private BeatBoardBackgroundView mBeatBoardBgView;
@@ -44,6 +49,7 @@ public class Sequencer extends Activity implements OnClickListener {
     private HashMap<Integer, Integer> mSoundMap;
     private int mSelectedSoundImageButtonId;
     private Drawable mSelectedSoundDrawable;
+    private AudioTrackSample mAudioTrack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,20 +90,19 @@ public class Sequencer extends Activity implements OnClickListener {
 
         mIsTmerScheduled = false;
 
-        int[] instrumentIds = { R.id.drumButtonRide, R.id.drumButtonHiHatOpen,
-                R.id.drumButtonTom, R.id.drumButtonSnare };
-
-        for (int instrumentId : instrumentIds) {
-            findViewById(instrumentId).setOnClickListener(this);
-        }
-
         mSoundMap = new HashMap<Integer, Integer>();
         mSoundMap.put(R.id.drumButtonTom, R.raw.tom);
         mSoundMap.put(R.id.drumButtonHiHatOpen, R.raw.hat_open);
         mSoundMap.put(R.id.drumButtonRide, R.raw.ride_bell);
         mSoundMap.put(R.id.drumButtonSnare, R.raw.snare);
+        mSoundMap.put(R.id.drumButtonDing, R.raw.ding);
 
+        for (Integer viewResId : mSoundMap.keySet()){
+            findViewById(viewResId).setOnClickListener(this);
+        }
+        
         mSelectedSoundResourceId = mSoundMap.get(R.id.drumButtonTom);
+        
     }
 
     @Override
@@ -148,6 +153,8 @@ public class Sequencer extends Activity implements OnClickListener {
     private void stopLooping() {
         mTimer.shutdown();
         mIsTmerScheduled = false;
+        mAudioTrack.mPlay = false;
+        
     }
 
     private boolean isLooping() {
@@ -158,6 +165,9 @@ public class Sequencer extends Activity implements OnClickListener {
      * purpose Begin looping the sequence
      */
     private void startLooping() {
+        mAudioTrack = new AudioTrackSample();
+        mAudioTrack.run();
+        
         // allow for quarter notes
         int periodMs = convertBpmToPeriodMs(getBpm());
 
@@ -168,6 +178,7 @@ public class Sequencer extends Activity implements OnClickListener {
             public void run() {
                 int mBeatIndex = revolvingBeatIndex();
                 
+                /*
                 ArrayList<BeatSubDivide> subDivisionsTemp;
                 Beat beat = mBeatsArray.get(mBeatIndex);
                 
@@ -185,11 +196,15 @@ public class Sequencer extends Activity implements OnClickListener {
                                 sound.play();
 
                             }
+                            continue;
                         }
 
                     }
 
                 }
+                */
+                
+                
 
                 mUiUpdateHandler.sendMessage(mUiUpdateHandler
                         .obtainMessage(mBeatIndex));

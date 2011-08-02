@@ -70,6 +70,12 @@
                     android:background="@color/transparent"
                     android:layout_height="40dip" android:scaleType="fitXY"
                     android:layout_width="40dip" android:padding="0dip"></ImageButton>
+                    
+                <ImageButton android:id="@+id/drumButtonDing"
+                    android:src="@drawable/tom"
+                    android:background="@color/transparent"
+                    android:layout_height="40dip" android:scaleType="fitXY"
+                    android:layout_width="40dip" android:padding="0dip"></ImageButton>
             </LinearLayout>
 
         </HorizontalScrollView>

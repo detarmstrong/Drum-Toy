@@ -1,7 +1,9 @@
-package com.sparkmachine.DrumMachine;
+package com.sparkmachine.drum;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.sparkmachine.drum.R;
 
 import android.content.Context;
 import android.graphics.Canvas;

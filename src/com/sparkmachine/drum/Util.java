@@ -1,4 +1,4 @@
-package com.sparkmachine.DrumMachine;
+package com.sparkmachine.drum;
 
 import android.app.Activity;
 import android.content.Context;

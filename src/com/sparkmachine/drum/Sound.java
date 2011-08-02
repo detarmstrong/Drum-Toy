@@ -1,11 +1,15 @@
-package com.sparkmachine.DrumMachine;
+package com.sparkmachine.drum;
 
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 
 public class Sound {
+    private static SoundPool sSoundPool;
+
     private Point mSoundSymbolCenterPoint;
 
     private MediaPlayer mMediaPlayer;
@@ -13,7 +17,7 @@ public class Sound {
     private int mSoundImageButtonId;
 
     private Drawable mSoundImageDrawable;
-
+    
     public Sound(Context context, int soundResourceId) {
         mMediaPlayer = MediaPlayer.create(context, soundResourceId);
         
